@@ -2,6 +2,10 @@
 
 import sys
 
+HLT = 0b00000001
+LDI = 0b10000010
+PRN = 0b01000111
+
 class CPU:
     """Main CPU class."""
 
@@ -71,4 +75,20 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        while True:
+            opcode = self.ram[self.pc]
+            operand_a = self.ram_read(self.pc + 1)
+            operand_b = self.ram_read(self.pc + 2)
+            if opcode == LDI:
+                self.reg[operand_a] = operand_b
+                self.pc += 3
+            elif opcode == PRN:
+                print(self.reg[operand_a])
+                self.pc += 2
+            elif opcode == HLT:
+                sys.exit(0)
+            else:
+                print(f'I did not understand that command: {opcode}')
+                sys.exit(1)
+
+
