@@ -43,7 +43,6 @@ class CPU:
                     num = int(value, 2)
                     self.ram[address] = num
                     address += 1
-                    print(f'Ram {self.ram}')
 
         except FileNotFoundError:
             print("File not found")
@@ -98,6 +97,8 @@ class CPU:
                 self.pc += 2
             elif opcode == MUL:
                 print('MUL')
+                product = self.reg[operand_a] * self.reg[operand_b]
+                print(product)
                 self.pc += 3
             elif opcode == HLT:
                 print('HTL')
