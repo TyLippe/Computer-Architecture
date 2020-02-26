@@ -2,10 +2,12 @@
 
 import sys
 
-HLT = 0b00000001
-LDI = 0b10000010
-PRN = 0b01000111
-MUL = 0b10100010
+HLT     = 0b00000001
+LDI     = 0b10000010
+PRN     = 0b01000111
+MUL     = 0b10100010
+PUSH    = 0b01000101
+POP     = 0b01000110
 
 class CPU:
     """Main CPU class."""
@@ -15,6 +17,7 @@ class CPU:
         self.pc = 0
         self.ram = [0] * 256
         self.reg = [0] * 8
+        self.SP = 7
 
     def ram_read(self, mar):
         mdr = self.ram[mar]
@@ -84,6 +87,8 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while True:
+            # print(f'Ram: {self.ram}')
+            # print(f'Register: {self.reg}')
             opcode = self.ram[self.pc]
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
@@ -100,6 +105,18 @@ class CPU:
                 product = self.reg[operand_a] * self.reg[operand_b]
                 print(product)
                 self.pc += 3
+            elif opcode == PUSH:
+                print('PUSH')
+                val = self.reg[operand_a]
+                self.reg[self.SP] -= 1
+                self.ram[self.reg[self.SP]] = val
+                self.pc += 2
+            elif opcode == POP:
+                print('POP')
+                val = self.ram[self.reg[self.SP]]
+                self.reg[operand_a] = val
+                self.reg[self.SP] += 1
+                self.pc += 2
             elif opcode == HLT:
                 print('HLT')
                 sys.exit(0)

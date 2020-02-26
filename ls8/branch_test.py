@@ -1,34 +1,20 @@
-"""CPU functionality."""
+"""Branch Table functionality."""
 
 import sys
 
-OP1 = 0b00000001    # HLT
-OP2 = 0b10000010    # LDI
-OP3 = 0b01000111    # PRN
-OP4 = 0b10100010    # MUL
+HLT = 0b00000001
+LDI = 0b10000010
+PRN = 0b01000111
+MUL = 0b10100010
 
 class CPU:
     """Main CPU class."""
 
     def __init__(self):
         """Construct a new CPU."""
-        self.branchtable = {}
-        self.branchtable[OP1] = self.handle_op1
-        self.branchtable[OP2] = self.handle_op2
-        self.branchtable[OP3] = self.handle_op3
-        self.branchtable[OP4] = self.handle_op4
-    
-    def handle_op1(self, a):
-        print("op 1: " + a)
-
-    def handle_op2(self, a):
-        print("op 2: " + a)
-    
-    def handle_op3(self, a):
-        print("op 3: " + a)
-    
-    def handle_op4(self, a):
-        print("op 4: " + a)
+        self.pc = 0
+        self.ram = [0] * 256
+        self.reg = [0] * 8
 
     def ram_read(self, mar):
         mdr = self.ram[mar]
@@ -115,7 +101,7 @@ class CPU:
                 print(product)
                 self.pc += 3
             elif opcode == HLT:
-                print('HTL')
+                print('HLT')
                 sys.exit(0)
             else:
                 print(f'I did not understand that command: {opcode}')
