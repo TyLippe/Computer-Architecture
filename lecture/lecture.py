@@ -6,13 +6,17 @@ PRINT_NUM      = 3
 SAVE           = 4  # Save a value to a register
 PRINT_REGISTER = 5  # Print the value in a register
 ADD            = 6  # ADD 2 registers, store the result in 1st reg
+PUSH           = 7
+POP            = 8
 
 
-memory = [0] * 256
+memory = [0] * 32
 
 register = [0] * 8
 
 pc = 0  # Program counter
+
+SP = 7  # Stack pointer is R7
 
 
 def load_memory(filename):
@@ -40,24 +44,23 @@ def load_memory(filename):
         print("File not found")
         sys.exit(2)
 
-
 if len(sys.argv) != 2:
     print("ERROR: Must have file name")
     sys.exit(1)
-
+    
 load_memory(sys.argv[1])
-
-print(memory)
 
 while True:
     command = memory[pc]
+    print(memory)
+    print(register)
 
     if command == PRINT_BEEJ:
-        print("Beej!")
+        # print("Beej!")
         pc += 1
     elif command == PRINT_NUM:
         num = memory[pc + 1]
-        print(num)
+        # print(num)
         pc += 2
     elif command == SAVE:
         # Save a value to a register
@@ -68,7 +71,7 @@ while True:
     elif command == PRINT_REGISTER:
         # Print the value in a register
         reg = memory[pc + 1]
-        print(register[reg])
+        # print(register[reg])
         pc += 2
     elif command == ADD:
         # ADD 2 registers, store the result in 1st reg
@@ -76,6 +79,28 @@ while True:
         reg_b = memory[pc + 2]
         register[reg_a] += register[reg_b]
         pc += 3
+    elif command == PUSH:
+        print('PUSH')
+        # Grab the register argument
+        reg = memory[pc + 1]
+        print(f'Reg: {reg}')
+        val = register[reg]
+        print(f'Val: {val}')
+        # Decrement the SP.
+        register[SP] -= 1
+        # Copy the value in the given register to the address pointed to by SP.
+        memory[register[SP]] = val
+        pc += 2
+    elif command == POP:
+        print('POP')
+        # Grab the value from the top of the stack
+        reg = memory[pc + 1]
+        val = memory[register[SP]]
+        # Copy the value from the address pointed to by SP to the given register.
+        register[reg] = val
+        # Increment SP.
+        register[SP] += 1
+        pc += 2
     elif command == HALT:
         sys.exit(0)
     else:
