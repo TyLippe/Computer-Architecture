@@ -8,6 +8,8 @@ PRINT_REGISTER = 5  # Print the value in a register
 ADD            = 6  # ADD 2 registers, store the result in 1st reg
 PUSH           = 7
 POP            = 8
+CALL           = 9
+RET            = 10
 
 
 memory = [0] * 32
@@ -44,36 +46,42 @@ def load_memory(filename):
         print("File not found")
         sys.exit(2)
 
+
 if len(sys.argv) != 2:
     print("ERROR: Must have file name")
     sys.exit(1)
-    
+
 load_memory(sys.argv[1])
+
 
 while True:
     command = memory[pc]
-    print(memory)
-    print(register)
+    print(f'Memory: {memory}')
+    print(f'Register: {register}')
 
     if command == PRINT_BEEJ:
-        # print("Beej!")
+        print("Beej!")
         pc += 1
     elif command == PRINT_NUM:
+        print('PRINT')
         num = memory[pc + 1]
-        # print(num)
+        print(num)
         pc += 2
     elif command == SAVE:
+        print('SAVE')
         # Save a value to a register
         num = memory[pc + 1]
         reg = memory[pc + 2]
         register[reg] = num
         pc += 3
     elif command == PRINT_REGISTER:
+        print('PRINT REG')
         # Print the value in a register
         reg = memory[pc + 1]
-        # print(register[reg])
+        print(register[reg])
         pc += 2
     elif command == ADD:
+        print('ADD')
         # ADD 2 registers, store the result in 1st reg
         reg_a = memory[pc + 1]
         reg_b = memory[pc + 2]
@@ -83,9 +91,7 @@ while True:
         print('PUSH')
         # Grab the register argument
         reg = memory[pc + 1]
-        print(f'Reg: {reg}')
         val = register[reg]
-        print(f'Val: {val}')
         # Decrement the SP.
         register[SP] -= 1
         # Copy the value in the given register to the address pointed to by SP.
@@ -101,7 +107,28 @@ while True:
         # Increment SP.
         register[SP] += 1
         pc += 2
+    elif command == CALL:
+        print('CALL')
+        # The address of the instruction directly after CALL
+        # is pushed onto the stack.
+        register[SP] -= 1
+        memory[register[SP]] = pc + 2
+        # This allows us to return to where we left off
+        # when the subroutine finishes executing.
+        # The PC is set to the address stored in the given register.
+        reg = memory[pc + 1]
+        pc = register[reg]
+        # We jump to that location in RAM and execute the first
+        # instruction in the subroutine. The PC can move forward or
+        # backwards from its current location.
+    elif command == RET:
+        print('RET')
+        # Return from subroutine.
+        # Pop the value from the top of the stack and store it in the PC.
+        pc = memory[register[SP]]
+        register[SP] += 1
     elif command == HALT:
+        print('HALT')
         sys.exit(0)
     else:
         print(f"I did not understand that command: {command}")
