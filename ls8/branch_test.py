@@ -1,20 +1,11 @@
-"""CPU functionality."""
+"""Branch Table functionality."""
 
 import sys
-import binascii
 
-HLT     = 0b00000001
-LDI     = 0b10000010
-PRN     = 0b01000111
-MUL     = 0b10100010
-PUSH    = 0b01000101
-POP     = 0b01000110
-CALL    = 0b01010000 
-RET     = 0b00010001
-ADD     = 0b10100000
-PRA     = 0b01001000
-
-SP = 7
+HLT = 0b00000001
+LDI = 0b10000010
+PRN = 0b01000111
+MUL = 0b10100010
 
 class CPU:
     """Main CPU class."""
@@ -93,62 +84,22 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while True:
-            # print(f'Ram: {self.ram}')
-            print(f'Register: {self.reg}')
             opcode = self.ram[self.pc]
-            # print(f'Opcode: {opcode}')
-            # print(f'Opcode: {opcode}')
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
             if opcode == LDI:
-                # print('LDI')
+                print('LDI')
                 self.reg[operand_a] = operand_b
                 self.pc += 3
             elif opcode == PRN:
-                # print('PRN')
+                print('PRN')
                 print(self.reg[operand_a])
                 self.pc += 2
             elif opcode == MUL:
-                # print('MUL')
+                print('MUL')
                 product = self.reg[operand_a] * self.reg[operand_b]
                 print(product)
                 self.pc += 3
-            elif opcode == PUSH:
-                # print('PUSH')
-                val = self.reg[operand_a]
-                self.reg[SP] -= 1
-                self.ram[self.reg[SP]] = val
-                self.pc += 2
-            elif opcode == POP:
-                # print('POP')
-                val = self.ram[self.reg[SP]]
-                self.reg[operand_a] = val
-                self.reg[SP] += 1
-                self.pc += 2
-            elif opcode == CALL:
-                # print('CALL')
-                val = self.pc + 2
-                reg = self.ram[self.pc + 1]
-                sub = self.reg[reg]
-                self.reg[SP]-=1  
-                self.ram[self.reg[SP]]=val
-                self.pc=sub  
-            elif opcode == RET:
-                # print('RET')
-                ret=self.reg[SP]
-                self.pc=self.ram[ret]
-                self.reg[SP]+=1
-            elif opcode == ADD:
-                # print('ADD')
-                self.reg[operand_a] += self.reg[operand_b]
-                self.pc += 3
-            elif opcode == PRA:
-                # print('PRA')
-                # Print alpha character value stored in the given register.
-                print("alpha character", self.reg[self.ram[self.pc + 1]])
-                # Print to the console the ASCII character corresponding to the value in the register.
-                print("ASCII", chr(self.reg[self.ram[self.pc + 1]]))
-                self.pc += 2
             elif opcode == HLT:
                 print('HLT')
                 sys.exit(0)

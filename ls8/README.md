@@ -65,6 +65,11 @@ but you'll have to implement those three above instructions first!
 * Read this whole file.
 * Skim the spec.
 
+  cpu.py   === CPU Class file
+  ls8.py   === 8-Bit emulator
+  examples === Example instructions for the CPU
+  asm      === Folder of asm files (script file format)
+
 ## Step 1: Add the constructor to `cpu.py`
 
 Add list properties to the `CPU` class to hold 256 bytes of memory and 8
